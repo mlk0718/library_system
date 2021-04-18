@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>图书管理系统</title>
+		<script src="../static/js/jquery.min.js"></script>
+		<script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+		<script src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+		<script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+		<script src="../static/js/highcharts-more.js"></script>
+		<script src="../static/js/highcharts-more.src.js"></script>
+		<script src="../static/js/highcharts.js"></script>
+		<script src="../static/js/highcharts.src.js"></script>
+		<script src="/static/js/jquery-2.1.1.min.js"></script>
+		<script src="/static/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+		<style></style>
+	</head>
+	<body style="background-image:url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1514262796588&di=5e3f8a1d6575940b6f0b04820c595f82&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F1%2F57a1488df006f.jpg')">
+			
+			<nav class="navbar navbar-default">
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+								aria-expanded="false">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand">
+							<img style="max-width:30px;margin-top:-6px;" class="logo" src="{{ url_for('static',filename='images/logo.jpg') }}">
+						</a>
+					</div>
+			
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">                    
+							<li class="active">
+								<a href="#">首页</a>
+							</li>
+							<li>
+								<a href="{{url_for('CardIfo')}}">持卡人信息</a>
+							</li>
+							<li>
+								<a href="{{ url_for('BooIfo') }}">图书信息</a>
+							</li>
+							<li>
+								<a href="{{ url_for('BorIfo') }}">借阅信息</a>
+							</li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">账号
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a href="#" target="_blank">修改密码</a>
+									</li>
+									<li>
+										<a href="{{ url_for('login') }}">更换账号</a>
+									</li>
+									<li role="separator" class="divider"></li>
+									<li>
+										<a href="{{ url_for('login') }}">注销</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+					<!-- /.navbar-collapse -->
+				</div>
+				<!-- /.container-fluid -->
+			</nav>
+		<div id="container1" style="width: 34%;height:400px;margin-left: 0%"></div>
+		<div id="container2" style="width: 33%;height:400px;margin-left: 33%;margin-top: -400px;"></div>
+		<div id="container3" style="width: 33%;height:400px;margin-left: 66%;margin-top: -400px;"></div>
+		<script src="../static/js/controller.js"></script>
+		<!-- /.script src="../static/js/test.js"></script-->
+		<script type="text/javascript">
+			$(function () {
+			var chart1 = Highcharts.chart('container1', {
+				title: {
+					text: '每日借书数量'
+				},
+				subtitle: {
+					text: '借书数量'
+				},
+				yAxis: {
+					title: {
+						text: ''
+					}
+				},
+				xAxis: {
+					categories: ['day7', 'day6', 'day5', 'day4', 'day3', 'day2', 'day1', 'day0']
+				},
+				legend: {
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'middle'
+				},
+				plotOptions: {
+					line: {
+						dataLabels: {
+							// 开启数据标签
+							enabled: true
+						},
+						// 关闭鼠标跟踪，对应的提示框、点击事件会失效
+						enableMouseTracking: false
+					}
+				},
+				series: [
+					{
+						name: '累计借出',
+						data: [2496, 2064, 9742, 2951, 3290, 3022, 3821, 4044]
+					},{
+						name: '每日借出',
+						data: [246, 264, 4742, 295, 329, 322, 382, 404]
+					}],
+				responsive: {
+					rules: [{
+						condition: {
+							maxWidth: 500
+						},
+						chartOptions: {
+							legend: {
+								layout: 'horizontal',
+								align: 'center',
+								verticalAlign: 'bottom'
+							}
+						}
+					}]
+				}
+			});
+			$(function(){
+				$(function () {
+					$.ajax({
+						type:"get",
+						url:"/value1",
+						dataType:"json",
+						success:function(data){
+							chart1.update({
+							xAxis:{
+								categories:data.BorrowDate
+							}
+						});
+						chart1.series[0].update({
+							data: data.Total
+						});
+						chart1.series[1].update({
+							data: data.Lend
+						});
+					},
+					error:function(xhr,type,errorThrown){
+
+					}
+				});
+			});
+		});
+	});
+	$(function () {
+		var chart2 = Highcharts.chart('container2', {
+		    chart: {
+		        plotBackgroundColor: null,
+		        plotBorderWidth: null,
+		        plotShadow: false,
+		        type: 'pie'
+		    },
+		    title: {
+		        text: '不同类型书籍比例'
+		    },
+		    tooltip: {
+		        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+		    },
+		    accessibility: {
+		        point: {
+		            valueSuffix: '%'
+		        }
+		    },
+		    plotOptions: {
+		        pie: {
+		            allowPointSelect: true,
+		            cursor: 'pointer',
+		            dataLabels: {
+		                enabled: true,
+		                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+		            }
+		        }
+		    },
+		    series: [{
+		        name: 'Brands',
+		        colorByPoint: true,
+		        data: [{
+		            name: 'Chrome',
+		            y: 61.41,
+		        }, {
+		            name: 'Internet Explorer',
+		            y: 11.84
+		        }, {
+		            name: 'Firefox',
+		            y: 10.85
+		        }, {
+		            name: 'Edge',
+		            y: 4.67
+		        }, {
+		            name: 'Safari',
+		            y: 4.18
+		        }, {
+		            name: 'Sogou Explorer',
+		            y: 1.64
+		        }, {
+		            name: 'Opera',
+		            y: 1.6
+		        }, {
+		            name: 'QQ',
+		            y: 1.2
+		        }]
+		    }]
+		});
+		$(function(){
+				$(function () {
+					$.ajax({
+						type:"get",
+						url:"/value2",
+						dataType:"json",
+						success:function(data){
+							chart2.series[0].update({
+							data:data.categories
+							});
+					},
+					error:function(xhr,type,errorThrown){
+
+					}
+				});
+			});
+		});
+		function pieClick(name){
+		 alert(name)
+		   }
+	});
+	$(function () {	
+		var chart3 = Highcharts.chart('container3', {
+		    chart: {
+		        plotBackgroundColor: null,
+		        plotBorderWidth: null,
+		        plotShadow: false,
+		        type: 'pie'
+		    },
+		    title: {
+		        text: '库存与借出'
+		    },
+		    tooltip: {
+		        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+		    },
+		    accessibility: {
+		        point: {
+		            valueSuffix: '%'
+		        }
+		    },
+		    plotOptions: {
+		        pie: {
+		            allowPointSelect: true,
+		            cursor: 'pointer',
+		            dataLabels: {
+		                enabled: true,
+		                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+		            }
+		        }
+		    },
+		    series: [{
+		        name: 'Brands',
+		        colorByPoint: true,
+		        data: [{
+		            name: 'Chrome',
+		            y: 61.41,
+		            sliced: true,
+		            selected: true
+		        }, {
+		            name: 'Internet Explorer',
+		            y: 11.84
+		        }, {
+		            name: 'Firefox',
+		            y: 10.85
+		        }, {
+		            name: 'Edge',
+		            y: 4.67
+		        }, {
+		            name: 'Safari',
+		            y: 4.18
+		        }, {
+		            name: 'Sogou Explorer',
+		            y: 1.64
+		        }, {
+		            name: 'Opera',
+		            y: 1.6
+		        }, {
+		            name: 'QQ',
+		            y: 1.2
+		        }, {
+		            name: 'Other',
+		            y: 2.61
+		        }]
+		    }]
+		});
+		$(function(){
+				$(function () {
+					$.ajax({
+						type:"get",
+						url:"/value3",
+						dataType:"json",
+						success:function(data){
+							chart3.series[0].update({
+								data:data.Situation
+							})
+					},
+					error:function(xhr,type,errorThrown){
+
+					}
+				});
+			});
+		});
+	});
+		</script>
+	</body>
+</html>
